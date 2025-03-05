@@ -1,6 +1,6 @@
 import readline from 'readline';
 import { fetchClaudeFromSDK } from './anthropic.js';
-import { clearChatHistory } from './history.js';
+import { loadMessages, saveMessages, clearChatHistory } from './history.js';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -30,12 +30,21 @@ rl.on('line', async (userInput) => {
     return;
   }
 
-  const message = await fetchClaudeFromSDK(userInput);
+  let messages = loadMessages();
+  messages.push({ role: 'user', content: userInput });
+
+  const message = await fetchClaudeFromSDK({ messages });
+  if (message?.content) {
+    messages.push({ role: 'assistant', content: message.content });
+    saveMessages(messages);
+  }
+
   if (message?.content?.[0]?.text) {
-    console.log(`${message.content[0].text}`);
+    console.log(message.content[0].text);
   } else {
     console.log(message);
   }
+
   process.stdout.write('> ');
 });
 

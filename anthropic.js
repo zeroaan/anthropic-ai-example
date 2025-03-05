@@ -1,43 +1,31 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { MODEL, MAX_TOKENS, X_API_KEY } from './config.js';
-import { loadMessages, saveMessages } from './history.js';
 
 const anthropic = new Anthropic({
   apiKey: X_API_KEY,
 });
 
-export async function fetchClaudeFromSDK(text, options) {
-  if (!text) {
-    console.log('No text provided');
+export async function fetchClaudeFromSDK({ text, messages, options }) {
+  if (!text && !messages) {
+    console.log('No messages provided');
     return;
   }
-
-  let messages = loadMessages();
-  messages.push({ role: 'user', content: text });
 
   const msg = await anthropic.messages.create({
     model: MODEL,
     max_tokens: MAX_TOKENS,
-    messages,
+    messages: messages || [{ role: 'user', content: text }],
     ...options,
   });
-
-  if (msg.content) {
-    messages.push({ role: 'assistant', content: msg.content });
-    saveMessages(messages);
-  }
 
   return msg;
 }
 
-export async function fetchClaude(text, options) {
-  if (!text) {
-    console.log('No text provided');
+export async function fetchClaude({ text, messages, options }) {
+  if (!text && !messages) {
+    console.log('No messages provided');
     return;
   }
-
-  let messages = loadMessages();
-  messages.push({ role: 'user', content: text });
 
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -49,47 +37,36 @@ export async function fetchClaude(text, options) {
     body: JSON.stringify({
       model: MODEL,
       max_tokens: MAX_TOKENS,
-      messages,
+      messages: messages || [{ role: 'user', content: text }],
       ...options,
     }),
   });
 
   const msg = await response.json();
 
-  if (msg.content) {
-    messages.push({ role: 'assistant', content: msg.content });
-    saveMessages(messages);
-  }
-
   return msg;
 }
 
-export async function countTokensFromSDK(text, options) {
-  if (!text) {
-    console.log('No text provided');
+export async function countTokensFromSDK({ text, messages, options }) {
+  if (!text && !messages) {
+    console.log('No messages provided');
     return;
   }
 
-  let messages = loadMessages();
-  messages.push({ role: 'user', content: text });
-
   const msg = await anthropic.messages.countTokens({
     model: MODEL,
-    messages,
+    messages: messages || [{ role: 'user', content: text }],
     ...options,
   });
 
   return msg;
 }
 
-export async function countTokens(text, options) {
-  if (!text) {
-    console.log('No text provided');
+export async function countTokens({ text, messages, options }) {
+  if (!text && !messages) {
+    console.log('No messages provided');
     return;
   }
-
-  let messages = loadMessages();
-  messages.push({ role: 'user', content: text });
 
   const response = await fetch('https://api.anthropic.com/v1/messages/count_tokens', {
     method: 'POST',
@@ -100,7 +77,7 @@ export async function countTokens(text, options) {
     },
     body: JSON.stringify({
       model: MODEL,
-      messages,
+      messages: messages || [{ role: 'user', content: text }],
       ...options,
     }),
   });
