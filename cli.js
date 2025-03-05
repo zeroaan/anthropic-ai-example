@@ -30,22 +30,26 @@ rl.on('line', async (userInput) => {
     return;
   }
 
-  let messages = loadMessages();
-  messages.push({ role: 'user', content: userInput });
+  try {
+    const messages = loadMessages();
+    messages.push({ role: 'user', content: userInput });
 
-  const message = await fetchClaudeFromSDK({ messages });
-  if (message?.content) {
-    messages.push({ role: 'assistant', content: message.content });
-    saveMessages(messages);
+    const message = await fetchClaudeFromSDK({ messages });
+    if (message?.content) {
+      messages.push({ role: 'assistant', content: message.content });
+      saveMessages(messages);
+    }
+
+    if (message?.content?.[0]?.text) {
+      console.log(message.content[0].text);
+    } else {
+      console.log(message);
+    }
+  } catch (error) {
+    console.error(error.message);
+  } finally {
+    process.stdout.write('> ');
   }
-
-  if (message?.content?.[0]?.text) {
-    console.log(message.content[0].text);
-  } else {
-    console.log(message);
-  }
-
-  process.stdout.write('> ');
 });
 
 rl.on('SIGINT', () => {
