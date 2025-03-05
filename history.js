@@ -24,7 +24,6 @@ export function clearChatHistory() {
   try {
     if (fs.existsSync(STORAGE_FILE)) {
       fs.unlinkSync(STORAGE_FILE);
-      console.log('Chat history cleared');
     }
   } catch (error) {
     console.error('Error clearing chat history:', error);

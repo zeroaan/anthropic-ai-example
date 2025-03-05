@@ -27,7 +27,6 @@ export async function fetchClaudeFromSDK(text, options) {
     saveMessages(messages);
   }
 
-  console.log(msg);
   return msg;
 }
 
@@ -62,7 +61,6 @@ export async function fetchClaude(text, options) {
     saveMessages(messages);
   }
 
-  console.log(msg);
   return msg;
 }
 
@@ -81,7 +79,6 @@ export async function countTokensFromSDK(text, options) {
     ...options,
   });
 
-  console.log(msg);
   return msg;
 }
 
@@ -110,6 +107,5 @@ export async function countTokens(text, options) {
 
   const msg = await response.json();
 
-  console.log(msg);
   return msg;
 }
