@@ -6,7 +6,7 @@ const anthropic = new Anthropic({
   apiKey: X_API_KEY,
 });
 
-export async function fetchClaudeFromSDK(text) {
+export async function fetchClaudeFromSDK(text, options) {
   if (!text) {
     console.log('No text provided');
     return;
@@ -19,6 +19,7 @@ export async function fetchClaudeFromSDK(text) {
     model: MODEL,
     max_tokens: MAX_TOKENS,
     messages,
+    ...options,
   });
 
   if (msg.content) {
@@ -30,7 +31,7 @@ export async function fetchClaudeFromSDK(text) {
   return msg;
 }
 
-export async function fetchClaude(text) {
+export async function fetchClaude(text, options) {
   if (!text) {
     console.log('No text provided');
     return;
@@ -50,6 +51,7 @@ export async function fetchClaude(text) {
       model: MODEL,
       max_tokens: MAX_TOKENS,
       messages,
+      ...options,
     }),
   });
 
@@ -64,7 +66,7 @@ export async function fetchClaude(text) {
   return msg;
 }
 
-export async function countTokensFromSDK(text) {
+export async function countTokensFromSDK(text, options) {
   if (!text) {
     console.log('No text provided');
     return;
@@ -76,13 +78,14 @@ export async function countTokensFromSDK(text) {
   const msg = await anthropic.messages.countTokens({
     model: MODEL,
     messages,
+    ...options,
   });
 
   console.log(msg);
   return msg;
 }
 
-export async function countTokens(text) {
+export async function countTokens(text, options) {
   if (!text) {
     console.log('No text provided');
     return;
@@ -101,6 +104,7 @@ export async function countTokens(text) {
     body: JSON.stringify({
       model: MODEL,
       messages,
+      ...options,
     }),
   });
 
